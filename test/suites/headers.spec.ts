@@ -159,6 +159,7 @@ describe('Duplicated Set-Cookie header', () => {
       key: 'Set-Cookie',
       value: 'routecookie2=routecookie2value'
     });
+    await tests.app.client.pause(100);
   });
 
   it('Add duplicated Set-Cookie headers on environment', async () => {
@@ -176,6 +177,7 @@ describe('Duplicated Set-Cookie header', () => {
       key: 'Set-Cookie',
       value: 'envcookie2=envcookie2value'
     });
+    await tests.app.client.pause(100);
   });
 
   it('Call /headers, we should get an array of Set-Cookie headers', async () => {

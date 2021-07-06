@@ -16,15 +16,14 @@ import { AnalyticsEvents } from 'src/renderer/app/enums/analytics-events.enum';
 import { Errors } from 'src/renderer/app/enums/errors.enum';
 import { OldExport } from 'src/renderer/app/models/data.model';
 import { DataService } from 'src/renderer/app/services/data.service';
+import { DialogsService } from 'src/renderer/app/services/dialogs.service';
+import { EnvironmentsService } from 'src/renderer/app/services/environments.service';
 import { EventsService } from 'src/renderer/app/services/events.service';
 import { MigrationService } from 'src/renderer/app/services/migration.service';
 import { OpenAPIConverterService } from 'src/renderer/app/services/openapi-converter.service';
 import { SchemasBuilderService } from 'src/renderer/app/services/schemas-builder.service';
 import { ToastsService } from 'src/renderer/app/services/toasts.service';
-import {
-  addEnvironmentAction,
-  addRouteAction
-} from 'src/renderer/app/stores/actions';
+import { addRouteAction } from 'src/renderer/app/stores/actions';
 import { Store } from 'src/renderer/app/stores/store';
 
 // Last migration done for each version
@@ -46,7 +45,9 @@ export class ImportExportService extends Logger {
     private dataService: DataService,
     private migrationService: MigrationService,
     private schemasBuilderService: SchemasBuilderService,
-    private openAPIConverterService: OpenAPIConverterService
+    private openAPIConverterService: OpenAPIConverterService,
+    private dialogsService: DialogsService,
+    private environmentsService: EnvironmentsService
   ) {
     super('[SERVICE][IMPORT-EXPORT]', toastService);
   }
@@ -63,7 +64,9 @@ export class ImportExportService extends Logger {
 
     this.logger.info('Exporting all environments to a file');
 
-    const filePath = await this.openSaveDialog('Export all to JSON');
+    const filePath = await this.dialogsService.showSaveDialog(
+      'Export all environments to JSON'
+    );
 
     // clone environments before exporting
     const dataToExport = cloneDeep(environments);
@@ -93,7 +96,9 @@ export class ImportExportService extends Logger {
 
     this.logger.info('Exporting active environment to a file');
 
-    const filePath = await this.openSaveDialog('Export current to JSON');
+    const filePath = await this.dialogsService.showSaveDialog(
+      'Export current environment to JSON'
+    );
 
     // clone environment before exporting
     const dataToExport = cloneDeep(activeEnvironment);
@@ -187,17 +192,14 @@ export class ImportExportService extends Logger {
   public async importFromFile() {
     this.logger.info('Importing from file');
 
-    const dialogResult = await MainAPI.invoke('APP_SHOW_OPEN_DIALOG', {
-      filters: [{ name: 'JSON', extensions: ['json'] }],
-      title: 'Import from file (JSON)'
-    });
+    const filePath = await this.dialogsService.showOpenDialog(
+      'Import from JSON file',
+      'json'
+    );
 
-    if (dialogResult.filePaths && dialogResult.filePaths[0]) {
+    if (filePath) {
       try {
-        const fileContent = await MainAPI.invoke(
-          'APP_READ_FILE',
-          dialogResult.filePaths[0]
-        );
+        const fileContent = await MainAPI.invoke('APP_READ_FILE', filePath);
 
         const importedData: Export & OldExport = JSON.parse(fileContent);
 
@@ -241,17 +243,16 @@ export class ImportExportService extends Logger {
   public async importOpenAPIFile() {
     this.logger.info('Importing OpenAPI file');
 
-    const dialogResult = await MainAPI.invoke('APP_SHOW_OPEN_DIALOG', {
-      filters: [{ name: 'OpenAPI v2/v3', extensions: ['yaml', 'json'] }]
-    });
+    const filePath = await this.dialogsService.showOpenDialog(
+      'Import OpenAPI specification file',
+      'openapi'
+    );
 
-    if (dialogResult.filePaths && dialogResult.filePaths[0]) {
-      const environment = await this.openAPIConverterService.import(
-        dialogResult.filePaths[0]
-      );
+    if (filePath) {
+      const environment = await this.openAPIConverterService.import(filePath);
 
       if (environment) {
-        this.store.update(addEnvironmentAction(environment));
+        this.environmentsService.addEnvironment(environment).subscribe();
 
         this.eventsService.analyticsEvents.next(AnalyticsEvents.IMPORT_FILE);
       }
@@ -270,7 +271,9 @@ export class ImportExportService extends Logger {
 
     this.logger.info('Exporting to OpenAPI file');
 
-    const filePath = await this.openSaveDialog('Export all to JSON');
+    const filePath = await this.dialogsService.showSaveDialog(
+      'Export environment to OpenAPI JSON'
+    );
 
     // dialog not cancelled
     if (filePath) {
@@ -386,7 +389,9 @@ export class ImportExportService extends Logger {
               `Importing environment ${migratedEnvironment.uuid}`
             );
 
-            this.store.update(addEnvironmentAction(migratedEnvironment));
+            this.environmentsService
+              .addEnvironment(migratedEnvironment)
+              .subscribe();
           });
       } else if (
         // routes cannot be migrated yet so we check the appVersion
@@ -406,7 +411,7 @@ export class ImportExportService extends Logger {
             routes: [data.item]
           };
 
-          this.store.update(addEnvironmentAction(newEnvironment));
+          this.environmentsService.addEnvironment(newEnvironment).subscribe();
         }
       } else if (dataToImportVersion !== Config.appVersion) {
         this.logger.info(
@@ -467,21 +472,5 @@ export class ImportExportService extends Logger {
     } else {
       return importedData as Export;
     }
-  }
-
-  /**
-   * Open the save dialog
-   */
-  private async openSaveDialog(title: string): Promise<string | null> {
-    const dialogResult = await MainAPI.invoke('APP_SHOW_SAVE_DIALOG', {
-      filters: [{ name: 'JSON', extensions: ['json'] }],
-      title
-    });
-
-    if (dialogResult.canceled) {
-      return null;
-    }
-
-    return dialogResult.filePath;
   }
 }

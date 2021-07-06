@@ -1,7 +1,9 @@
-export const IPCListenerChannels = [
+export const IPCMainListenerChannels = [
   'APP_APPLY_UPDATE',
-  'APP_DISABLE_EXPORT',
-  'APP_ENABLE_EXPORT',
+  'APP_DISABLE_ENVIRONMENT_MENU_ENTRIES',
+  'APP_ENABLE_ENVIRONMENT_MENU_ENTRIES',
+  'APP_DISABLE_ROUTE_MENU_ENTRIES',
+  'APP_ENABLE_ROUTE_MENU_ENTRIES',
   'APP_LOGS',
   'APP_OPEN_EXTERNAL_LINK',
   'APP_QUIT',
@@ -10,9 +12,10 @@ export const IPCListenerChannels = [
   'APP_WRITE_CLIPBOARD'
 ];
 
-export const IPCHandlerChannels = [
+export const IPCMainHandlerChannels = [
   'APP_GET_MIME_TYPE',
   'APP_GET_PLATFORM',
+  'APP_BUILD_STORAGE_FILEPATH',
   'APP_OPENAPI_DEREFERENCE',
   'APP_OPENAPI_VALIDATE',
   'APP_READ_CLIPBOARD',
@@ -24,4 +27,10 @@ export const IPCHandlerChannels = [
   'APP_STOP_SERVER',
   'APP_WRITE_FILE',
   'APP_WRITE_JSON_DATA'
+];
+
+export const IPCRendererHandlerChannels = [
+  'APP_MENU',
+  'APP_SERVER_EVENT',
+  'APP_UPDATE_AVAILABLE'
 ];

@@ -9,6 +9,7 @@ export type ContextMenuItemPayload = {
   subject: DataSubject;
   action:
     | 'delete'
+    | 'close'
     | 'duplicate'
     | 'duplicateToEnv'
     | 'env_settings'

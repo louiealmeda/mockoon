@@ -3,5 +3,10 @@
   "analytics": true,
   "lastMigration": 8,
   "bannerDismissed": [],
-  "logSizeLimit": 10000
+  "logSizeLimit": 10000,
+  "truncateRouteName": true,
+  "fakerLocale": "en",
+  "fakerSeed": null,
+  "lastChangelog": "9999.9.9",
+  "environments": []
 }

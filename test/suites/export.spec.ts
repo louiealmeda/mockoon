@@ -10,7 +10,7 @@ describe('Environments export', () => {
     const filePath = `./tmp/storage/${uuid()}.json`;
 
     it('Should create an export file with content', async () => {
-      tests.helpers.mockSaveDialog(filePath);
+      tests.helpers.mockDialog('showSaveDialog', [filePath]);
 
       tests.helpers.selectMenuEntry('EXPORT_FILE');
 
@@ -61,7 +61,7 @@ describe('Environments export', () => {
     const filePath = `./tmp/storage/${uuid()}.json`;
 
     it('Should create an export file with content', async () => {
-      tests.helpers.mockSaveDialog(filePath);
+      tests.helpers.mockDialog('showSaveDialog', [filePath]);
 
       tests.helpers.selectMenuEntry('EXPORT_FILE_SELECTED');
 

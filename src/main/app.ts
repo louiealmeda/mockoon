@@ -7,6 +7,7 @@ import {
   transports as logTransports
 } from 'electron-log';
 import { join as pathJoin, resolve as pathResolve } from 'path';
+import { migrateData } from './libs/data-migration';
 import { clearIPCChannels, initIPCListeners } from './libs/ipc';
 import { initMainWindow } from './libs/main-window';
 import { checkForUpdate } from './libs/update';
@@ -69,7 +70,9 @@ if (!appLock) {
   // This method will be called when Electron has finished
   // initialization and is ready to create browser windows.
   // Some APIs can only be used after this event occurs.
-  app.on('ready', () => {
+  app.on('ready', async () => {
+    await migrateData();
+
     initApp();
 
     checkForUpdate(mainWindow);

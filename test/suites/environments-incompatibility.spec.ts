@@ -27,7 +27,7 @@ describe('Environments incompatibility', () => {
   });
 
   it('Should not select the incompatible environment if all other environment have been deleted', async () => {
-    await tests.helpers.removeEnvironment(2);
+    await tests.helpers.closeEnvironment(2);
     await tests.helpers.checkNoEnvironmentSelected();
   });
 });

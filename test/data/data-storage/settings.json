@@ -1,0 +1,13 @@
+{
+  "welcomeShown": true,
+  "analytics": true,
+  "bannerDismissed": [],
+  "logSizeLimit": 10000,
+  "truncateRouteName": true,
+  "fakerLocale": "en",
+  "fakerSeed": null,
+  "lastChangelog": "9999.9.9",
+  "environments": [
+    { "uuid": "6f2d0c0b-cf7b-494d-9080-8d614bf761db", "path": "wrongpath" }
+  ]
+}

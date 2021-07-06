@@ -14,10 +14,12 @@ import { Toast } from 'src/renderer/app/models/toasts.model';
 import { Actions, ActionTypes } from 'src/renderer/app/stores/actions';
 import {
   getBodyEditorMode,
+  moveArrayItem,
   updateDuplicatedEnvironments,
   updateDuplicatedRoutes
 } from 'src/renderer/app/stores/reducer-utils';
 import { EnvironmentsStatuses, StoreType } from 'src/renderer/app/stores/store';
+import { EnvironmentDescriptor } from 'src/shared/models/settings.model';
 
 export type ReducerDirectionType = 'next' | 'previous';
 export type ReducerIndexes = { sourceIndex: number; targetIndex: number };
@@ -116,7 +118,8 @@ export const environmentReducer = (
             },
             {}
           ),
-        routesFilter: ''
+        routesFilter: '',
+        settings: { ...state.settings, environments: action.descriptors }
       };
       break;
     }
@@ -207,16 +210,21 @@ export const environmentReducer = (
     }
 
     case ActionTypes.MOVE_ENVIRONMENTS: {
-      const newEnvironments = state.environments.slice();
-      newEnvironments.splice(
-        action.indexes.targetIndex,
-        0,
-        newEnvironments.splice(action.indexes.sourceIndex, 1)[0]
-      );
-
       newState = {
         ...state,
-        environments: newEnvironments
+        environments: moveArrayItem<Environment>(
+          state.environments,
+          action.indexes.sourceIndex,
+          action.indexes.targetIndex
+        ),
+        settings: {
+          ...state.settings,
+          environments: moveArrayItem<EnvironmentDescriptor>(
+            state.settings.environments,
+            action.indexes.sourceIndex,
+            action.indexes.targetIndex
+          )
+        }
       };
       break;
     }
@@ -233,16 +241,13 @@ export const environmentReducer = (
 
       const newEnvironments = state.environments.map((environment) => {
         if (environment.uuid === state.activeEnvironmentUUID) {
-          const newRoutes = environment.routes.slice();
-          newRoutes.splice(
-            action.indexes.targetIndex,
-            0,
-            newRoutes.splice(action.indexes.sourceIndex, 1)[0]
-          );
-
           return {
             ...environment,
-            routes: newRoutes
+            routes: moveArrayItem<Route>(
+              environment.routes,
+              action.indexes.sourceIndex,
+              action.indexes.targetIndex
+            )
           };
         }
 
@@ -268,16 +273,13 @@ export const environmentReducer = (
         if (environment.uuid === state.activeEnvironmentUUID) {
           const newRoutes = environment.routes.map((route) => {
             if (route.uuid === state.activeRouteUUID) {
-              const newRouteResponses = route.responses.slice();
-              newRouteResponses.splice(
-                action.indexes.targetIndex,
-                0,
-                newRouteResponses.splice(action.indexes.sourceIndex, 1)[0]
-              );
-
               return {
                 ...route,
-                responses: newRouteResponses
+                responses: moveArrayItem<RouteResponse>(
+                  route.responses,
+                  action.indexes.sourceIndex,
+                  action.indexes.targetIndex
+                )
               };
             }
 
@@ -378,6 +380,17 @@ export const environmentReducer = (
       }
       environments.splice(afterIndex + 1, 0, newEnvironment);
 
+      let newSettings = state.settings;
+      if (action.filePath) {
+        newSettings = {
+          ...state.settings,
+          environments: [
+            ...state.settings.environments,
+            { uuid: newEnvironment.uuid, path: action.filePath }
+          ]
+        };
+      }
+
       newState = {
         ...state,
         activeEnvironmentUUID: newEnvironment.uuid,
@@ -408,7 +421,8 @@ export const environmentReducer = (
           ...state.activeEnvironmentLogsUUID,
           [newEnvironment.uuid]: null
         },
-        routesFilter: ''
+        routesFilter: '',
+        settings: newSettings
       };
       break;
     }
@@ -432,7 +446,13 @@ export const environmentReducer = (
         environmentsStatus: newEnvironmentsStatus,
         environmentsLogs: newEnvironmentsLogs,
         activeEnvironmentLogsUUID: newActiveEnvironmentLogsUUID,
-        routesFilter: ''
+        routesFilter: '',
+        settings: {
+          ...state.settings,
+          environments: state.settings.environments.filter(
+            (environment) => environment.uuid !== action.environmentUUID
+          )
+        }
       };
 
       if (state.activeEnvironmentUUID === action.environmentUUID) {

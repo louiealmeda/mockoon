@@ -9,7 +9,7 @@ describe('OpenAPI export', () => {
   const filePath = `./tmp/storage/${uuid()}.json`;
 
   it('Should export the environment and match the reference file', async () => {
-    tests.helpers.mockSaveDialog(filePath);
+    tests.helpers.mockDialog('showSaveDialog', [filePath]);
 
     tests.helpers.selectMenuEntry('EXPORT_OPENAPI_FILE');
 

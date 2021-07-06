@@ -23,6 +23,7 @@ import {
   UIStateProperties,
   ViewsNameType
 } from 'src/renderer/app/stores/store';
+import { EnvironmentDescriptor } from 'src/shared/models/settings.model';
 
 export const enum ActionTypes {
   SET_ACTIVE_TAB,
@@ -101,10 +102,14 @@ export const setActiveEnvironmentLogTabAction = (
  *
  * @param environments - initial environments from storage
  */
-export const setInitialEnvironmentsAction = (environments: Environments) =>
+export const setInitialEnvironmentsAction = (
+  environments: Environments,
+  descriptors: EnvironmentDescriptor[]
+) =>
   <const>{
     type: ActionTypes.SET_INITIAL_ENVIRONMENTS,
-    environments
+    environments,
+    descriptors
   };
 
 /**
@@ -164,17 +169,20 @@ export const moveRouteResponsesAction = (indexes: ReducerIndexes) =>
 
 /**
  * Add a new environment
+ * TODO maybe filePath will become mandatory
  *
  * @param environment - environment to add
  */
 export const addEnvironmentAction = (
   environment: Environment,
-  afterUUID?: string
+  afterUUID?: string,
+  filePath?: string
 ) =>
   <const>{
     type: ActionTypes.ADD_ENVIRONMENT,
     environment,
-    afterUUID
+    afterUUID,
+    filePath
   };
 
 /**

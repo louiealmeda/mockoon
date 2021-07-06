@@ -43,21 +43,17 @@ export const EnvironmentsContextMenu = (
     },
     label: 'Copy to clipboard (JSON)',
     icon: 'assignment',
+    separator: true,
     disabled: false
   },
   {
     payload: {
       subject: 'environment',
-      action: 'delete',
+      action: 'close',
       subjectUUID: environmentUUID
     },
-    label: 'Delete',
-    icon: 'delete',
-    confirm: {
-      icon: 'error',
-      label: 'Confirm deletion'
-    },
-    confirmColor: 'text-danger',
+    label: 'Close environment',
+    icon: 'close',
     disabled: false
   }
 ];

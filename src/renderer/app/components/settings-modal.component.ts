@@ -8,9 +8,9 @@ import {
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Observable } from 'rxjs';
 import { FakerLocales } from 'src/renderer/app/constants/faker.constants';
-import { Settings } from 'src/renderer/app/models/settings.model';
 import { SettingsService } from 'src/renderer/app/services/settings.service';
 import { Store } from 'src/renderer/app/stores/store';
+import { Settings } from 'src/shared/models/settings.model';
 
 @Component({
   selector: 'app-settings-modal',

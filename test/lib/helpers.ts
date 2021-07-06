@@ -116,11 +116,18 @@ export class Helpers {
     );
   }
 
-  public async removeEnvironment(index: number) {
-    await this.contextMenuClickAndConfirm(
+  public async openEnvironment() {
+    await this.elementClick(
+      '.environments-menu .nav:first-of-type .nav-item .nav-link.open-environment'
+    );
+  }
+
+  public async closeEnvironment(index: number) {
+    await this.contextMenuClick(
       `.environments-menu .menu-list .nav-item:nth-child(${index}) .nav-link`,
       5
     );
+    await this.testsInstance.app.client.pause(500);
   }
 
   public async duplicateEnvironment(index: number) {
@@ -184,14 +191,6 @@ export class Helpers {
       '.environment-logs-column:nth-child(1) .menu-list .nav-item',
       expected
     );
-  }
-
-  public async toggleEnvironmentMenu() {
-    await this.elementClick(
-      '.environments-menu .nav:first-of-type .nav-item .nav-link.toggle-environments-menu'
-    );
-    // wait for environment menu to open/close
-    await this.testsInstance.app.client.pause(310);
   }
 
   public async contextMenuOpen(targetMenuItemSelector: string) {
@@ -284,7 +283,7 @@ export class Helpers {
 
     if (name) {
       const text = await this.getElementText(selector + ' > div:first-of-type');
-      expect(text).to.equal(name);
+      expect(text).to.contains(name);
     }
   }
 
@@ -513,17 +512,26 @@ export class Helpers {
     await this.waitElementExist('.modal-dialog');
   }
 
-  public mockSaveDialog(filePath: string) {
+  /**
+   * Prepare the save mock dialogs with the desired sequence of filepath.
+   * Each item will be used by the mock for each subsequent save dialog call.
+   * Please note that the open dialog always returns an array of paths.
+   *
+   * @param sequenceFilePaths
+   */
+  public mockDialog(
+    dialogType: 'showSaveDialog' | 'showOpenDialog',
+    sequenceFilePaths: string[]
+  ) {
     this.testsInstance.ipcRenderer.sendSync('SPECTRON_FAKE_DIALOG', {
-      method: 'showSaveDialog',
-      value: { filePath }
-    });
-  }
-
-  public mockOpenDialog(filePath: string[]) {
-    this.testsInstance.ipcRenderer.sendSync('SPECTRON_FAKE_DIALOG', {
-      method: 'showOpenDialog',
-      value: { filePaths: filePath }
+      method: dialogType,
+      values: sequenceFilePaths.map((sequencePath) =>
+        dialogType === 'showOpenDialog'
+          ? {
+              filePaths: [sequencePath]
+            }
+          : { filePath: sequencePath }
+      )
     });
   }
 
@@ -677,6 +685,10 @@ export class Helpers {
         );
       }
     }
+  }
+
+  public async assertFileNotExists(filePath: string, errorMessage: string) {
+    await fs.readFile(filePath).should.be.rejectedWith(errorMessage);
   }
 
   public async addHeader(
