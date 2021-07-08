@@ -13,8 +13,12 @@ import {
   SaveDialogReturnValue
 } from 'electron';
 import { OpenAPI, OpenAPIV2, OpenAPIV3 } from 'openapi-types';
+import { EnvironmentDescriptor } from 'src/shared/models/settings.model';
 
 export interface MainAPIModel {
+  invoke<T>(
+    channel: 'APP_NEW_STORAGE_MIGRATION'
+  ): Promise<EnvironmentDescriptor[]>;
   invoke<T>(
     channel: 'APP_READ_JSON_DATA',
     key: string,

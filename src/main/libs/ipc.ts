@@ -24,6 +24,7 @@ import {
   IPCMainHandlerChannels,
   IPCMainListenerChannels
 } from '../constants/ipc.constants';
+import { migrateData } from './data-migration';
 import { toggleEnvironmentMenuItems, toggleRouteMenuItems } from './menu';
 import { applyUpdate } from './update';
 
@@ -97,8 +98,25 @@ export const initIPCListeners = (
         key = parsedPath.name;
         options.dataPath = parsedPath.dir;
       }
+      try {
+        const data = await promisify<string, DataOptions, any>(storageGet)(
+          key,
+          options
+        );
 
-      return await promisify<string, DataOptions>(storageGet)(key, options);
+        // if object is empty return null instead (electron json storage returns empty object if file does not exists)
+        if (
+          !data ||
+          (Object.keys(data).length === 0 && data.constructor === Object)
+        ) {
+          return null;
+        }
+
+        return data;
+      } catch (error) {
+        // if file empty (JSON.parse error), it will throw
+        return null;
+      }
     }
   );
 
@@ -252,6 +270,11 @@ export const initIPCListeners = (
       runningServerInstances[environmentUUID].stop();
     }
   });
+
+  ipcMain.handle(
+    'APP_NEW_STORAGE_MIGRATION',
+    async (event) => await migrateData()
+  );
 };
 
 /**

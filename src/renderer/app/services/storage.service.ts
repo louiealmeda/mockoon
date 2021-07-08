@@ -3,7 +3,6 @@ import { BehaviorSubject, EMPTY, from, Observable, of } from 'rxjs';
 import {
   catchError,
   distinctUntilChanged,
-  map,
   mergeMap,
   tap
 } from 'rxjs/operators';
@@ -52,14 +51,6 @@ export class StorageService {
    */
   public loadData<T>(key: string, path?: string): Observable<T> {
     return from(MainAPI.invoke<T>('APP_READ_JSON_DATA', key, path)).pipe(
-      map((data) => {
-        // if object is empty return null instead (electron json storage returns empty object if file does not exists)
-        if (Object.keys(data).length === 0 && data.constructor === Object) {
-          return null;
-        }
-
-        return data;
-      }),
       catchError((error) => {
         const errorMessage = `Error while loading ${key}`;
 

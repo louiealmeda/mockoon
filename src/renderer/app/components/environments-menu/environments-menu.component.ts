@@ -10,6 +10,7 @@ import { Environment, Environments } from '@mockoon/commons';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { EnvironmentsContextMenu } from 'src/renderer/app/components/context-menu/context-menus';
+import { Config } from 'src/renderer/app/config';
 import { ContextMenuEvent } from 'src/renderer/app/models/context-menu.model';
 import { ScrollDirection } from 'src/renderer/app/models/ui.model';
 import { EnvironmentsService } from 'src/renderer/app/services/environments.service';
@@ -32,6 +33,7 @@ export class EnvironmentsMenuComponent implements OnInit {
   public environmentsStatus$: Observable<EnvironmentsStatuses>;
   public duplicatedEnvironments$: Observable<Set<string>>;
   public environmentFiles$: Observable<{ [key in string]: true | undefined }>;
+  public menuSize = Config.defaultEnvironmentMenuSize;
 
   constructor(
     private environmentsService: EnvironmentsService,

@@ -116,6 +116,7 @@
     "glob": "7.1.7",
     "jasmine-core": "3.7.1",
     "jasmine-spec-reporter": "7.0.0",
+    "joi": "17.4.0",
     "lodash": "4.17.21",
     "mocha": "8.4.0",
     "ngx-markdown": "11.1.3",

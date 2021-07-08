@@ -18,6 +18,7 @@ import {
   tap
 } from 'rxjs/operators';
 import { RoutesContextMenu } from 'src/renderer/app/components/context-menu/context-menus';
+import { Config } from 'src/renderer/app/config';
 import { ContextMenuEvent } from 'src/renderer/app/models/context-menu.model';
 import { EnvironmentsService } from 'src/renderer/app/services/environments.service';
 import { EventsService } from 'src/renderer/app/services/events.service';
@@ -47,6 +48,7 @@ export class RoutesMenuComponent implements OnInit, OnDestroy {
   public routesFilter$: Observable<string>;
   public routesFilter: FormControl;
   public dragIsDisabled = false;
+  public menuSize = Config.defaultRouteMenuSize;
   private routesFilterSubscription: Subscription;
 
   constructor(
