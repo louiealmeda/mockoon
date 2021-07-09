@@ -681,11 +681,31 @@ export class EnvironmentsService extends Logger {
 
       if (log.response) {
         const headers: Header[] = [];
+        console.log(log.response.headers);
         log.response.headers.forEach((header) => {
+          if (
+            [
+              'content-encoding',
+              'transfer-encoding',
+              'content-length'
+            ].includes(header.key)
+          ) {
+            return;
+          }
+
           headers.push(
             this.schemasBuilderService.buildHeader(header.key, header.value)
           );
         });
+
+        if (log.response.body) {
+          headers.push(
+            this.schemasBuilderService.buildHeader(
+              'content-length',
+              log.response.body.length.toString()
+            )
+          );
+        }
 
         routeResponse = {
           ...this.schemasBuilderService.buildRouteResponse(),
