@@ -6,7 +6,7 @@ import {
   Settings
 } from 'src/shared/models/settings.model';
 
-const settingsDefault = {
+const settingsDefault: Settings = {
   welcomeShown: false,
   analytics: true,
   bannerDismissed: [],
@@ -19,7 +19,8 @@ const settingsDefault = {
   fakerLocale: 'en',
   fakerSeed: null,
   lastChangelog: Config.appVersion,
-  environments: []
+  environments: [],
+  enableTelemetry: true
 };
 
 export const settingsSchema = Joi.object<Settings & PreMigrationSettings>({
@@ -70,7 +71,10 @@ export const settingsSchema = Joi.object<Settings & PreMigrationSettings>({
     )
     .failover(settingsDefault.environments)
     .required(),
-  lastMigration: Joi.number().strip()
+  lastMigration: Joi.number().strip(),
+  enableTelemetry: Joi.boolean()
+    .failover(settingsDefault.enableTelemetry)
+    .required()
 })
   .failover(settingsDefault)
   .default(settingsDefault)

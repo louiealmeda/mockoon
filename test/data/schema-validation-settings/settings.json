@@ -14,5 +14,6 @@
     "unknown",
     { "uuid": "", "path": "/home/username/file1.json" }
   ],
+  "enableTelemetry": true,
   "unknown": true
 }
