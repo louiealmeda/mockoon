@@ -17,6 +17,7 @@ import {
   SettingsProperties
 } from 'src/renderer/app/models/settings.model';
 import { StorageService } from 'src/renderer/app/services/storage.service';
+import { TelemetryService } from 'src/renderer/app/services/telemetry.service';
 import { updateSettingsAction } from 'src/renderer/app/stores/actions';
 import { Store } from 'src/renderer/app/stores/store';
 import {
@@ -30,7 +31,11 @@ export class SettingsService {
   private logger = new Logger('[SERVICE][SETTINGS]');
   private storageKey = 'settings';
 
-  constructor(private store: Store, private storageService: StorageService) {
+  constructor(
+    private store: Store,
+    private storageService: StorageService,
+    private telemetryService: TelemetryService
+  ) {
     // switch Faker locale
     this.store
       .select('settings')
@@ -83,6 +88,10 @@ export class SettingsService {
             environmentsList: EnvironmentDescriptor[];
           }) => {
             this.getOldSettings(settingsData.settings);
+
+            if (!settingsData.settings) {
+              this.telemetryService.setFirstSession();
+            }
 
             const validatedSchema = settingsSchema.validate(
               settingsData.settings

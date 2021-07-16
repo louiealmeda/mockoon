@@ -681,7 +681,6 @@ export class EnvironmentsService extends Logger {
 
       if (log.response) {
         const headers: Header[] = [];
-        console.log(log.response.headers);
         log.response.headers.forEach((header) => {
           if (
             [

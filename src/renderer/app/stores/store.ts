@@ -66,7 +66,6 @@ export type StoreType = {
   // the active log UUID per environment
   activeEnvironmentLogsUUID: ActiveEnvironmentsLogUUIDs;
   toasts: Toast[];
-  userId: string;
   uiState: UIState;
   settings: Settings;
   duplicateRouteToAnotherEnvironment: DuplicateRouteToAnotherEnvironment;
@@ -101,7 +100,6 @@ export class Store {
     duplicatedRoutes: {},
     environmentsLogs: {},
     toasts: [],
-    userId: null,
     uiState: {
       closing: false
     },

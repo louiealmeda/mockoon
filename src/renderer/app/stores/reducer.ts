@@ -925,14 +925,6 @@ export const environmentReducer = (
       break;
     }
 
-    case ActionTypes.SET_USER_ID: {
-      newState = {
-        ...state,
-        userId: action.userId
-      };
-      break;
-    }
-
     case ActionTypes.UPDATE_SETTINGS: {
       newState = {
         ...state,

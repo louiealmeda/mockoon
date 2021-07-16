@@ -27,7 +27,8 @@ export const IPCMainHandlerChannels = [
   'APP_STOP_SERVER',
   'APP_WRITE_FILE',
   'APP_WRITE_JSON_DATA',
-  'APP_NEW_STORAGE_MIGRATION'
+  'APP_NEW_STORAGE_MIGRATION',
+  'APP_GET_OS'
 ];
 
 export const IPCRendererHandlerChannels = [

@@ -55,13 +55,13 @@ import {
 import { Toast } from 'src/renderer/app/models/toasts.model';
 import { AnalyticsService } from 'src/renderer/app/services/analytics.service';
 import { ApiService } from 'src/renderer/app/services/api.service';
-import { AuthService } from 'src/renderer/app/services/auth.service';
 import { DialogsService } from 'src/renderer/app/services/dialogs.service';
 import { EnvironmentsService } from 'src/renderer/app/services/environments.service';
 import { EventsService } from 'src/renderer/app/services/events.service';
 import { ImportExportService } from 'src/renderer/app/services/import-export.service';
 import { SettingsService } from 'src/renderer/app/services/settings.service';
 import { StorageService } from 'src/renderer/app/services/storage.service';
+import { TelemetryService } from 'src/renderer/app/services/telemetry.service';
 import { ToastsService } from 'src/renderer/app/services/toasts.service';
 import { UIService } from 'src/renderer/app/services/ui.service';
 import {
@@ -128,7 +128,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   constructor(
     private analyticsService: AnalyticsService,
-    private authService: AuthService,
+    private telemetryService: TelemetryService,
     private environmentsService: EnvironmentsService,
     private eventsService: EventsService,
     private formBuilder: FormBuilder,
@@ -145,6 +145,11 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.settingsService.saveSettings().subscribe();
     this.environmentsService.loadEnvironments().subscribe();
     this.environmentsService.saveEnvironments().subscribe();
+  }
+
+  @HostListener('document:click')
+  public documentClick() {
+    this.telemetryService.sendEvent();
   }
 
   // Listen to widow beforeunload event, and verify that no data saving is in progress
@@ -170,6 +175,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
       event.returnValue = '';
     }
+    this.telemetryService.closeSession();
   }
 
   ngOnInit() {
@@ -179,11 +185,9 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     this.initForms();
 
-    // auth anonymously through firebase
-    this.authService.auth();
+    this.telemetryService.init().subscribe();
 
     this.analyticsService.init();
-
     this.eventsService.analyticsEvents.next(AnalyticsEvents.PAGEVIEW);
     this.eventsService.analyticsEvents.next(AnalyticsEvents.APPLICATION_START);
 

@@ -11,5 +11,6 @@
   "fakerLocale": "en",
   "fakerSeed": null,
   "lastChangelog": "1.0.0",
-  "environments": []
+  "environments": [],
+  "enableTelemetry": true
 }

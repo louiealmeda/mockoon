@@ -10,5 +10,6 @@
   "logsMenuSize": 150,
   "fakerLocale": "en",
   "fakerSeed": null,
-  "lastChangelog": "9999.9.9"
+  "lastChangelog": "9999.9.9",
+  "enableTelemetry": true
 }

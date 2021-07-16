@@ -16,4 +16,5 @@ export type Settings = {
   fakerSeed: number;
   lastChangelog: string;
   environments: EnvironmentDescriptor[];
+  enableTelemetry: boolean;
 };
