@@ -1,7 +1,7 @@
 import { Export } from '@mockoon/commons';
 import { Config } from 'src/renderer/app/config';
 import { Tests } from 'test/lib/tests';
-import { v1 as uuid } from 'uuid';
+import { v4 as uuid } from 'uuid';
 
 describe('Environments export', () => {
   describe('Export all environments to a file (JSON)', () => {

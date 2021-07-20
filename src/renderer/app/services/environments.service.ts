@@ -119,7 +119,7 @@ export class EnvironmentsService extends Logger {
           this.logMessage('info', 'FIRST_LOAD_DEMO_ENVIRONMENT');
 
           const defaultEnvironment =
-            this.schemasBuilderService.buildDefaultEnvironment();
+            this.schemasBuilderService.buildDemoEnvironment();
 
           return of([
             {

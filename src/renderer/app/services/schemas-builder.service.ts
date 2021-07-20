@@ -8,7 +8,7 @@ import {
 } from '@mockoon/commons';
 import { cloneDeep } from 'lodash';
 import { DataService } from 'src/renderer/app/services/data.service';
-import { v1 as uuid } from 'uuid';
+import { v4 as uuid } from 'uuid';
 
 @Injectable({ providedIn: 'root' })
 export class SchemasBuilderService {
@@ -97,9 +97,9 @@ export class SchemasBuilderService {
   }
 
   /**
-   * Build a default environment when starting the application for the first time
+   * Build a demo environment when starting the application for the first time
    */
-  public buildDefaultEnvironment(): Environment {
+  public buildDemoEnvironment(): Environment {
     return {
       ...this.buildEnvironment(),
       name: 'Demo API',
