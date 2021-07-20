@@ -1,14 +1,8 @@
 import { Injectable } from '@angular/core';
-import {
-  BINARY_BODY,
-  Environment,
-  Environments,
-  Route,
-  Transaction
-} from '@mockoon/commons';
+import { BINARY_BODY, Environment, Route, Transaction } from '@mockoon/commons';
 import { EnvironmentLog } from 'src/renderer/app/models/environment-logs.model';
 import { Store } from 'src/renderer/app/stores/store';
-import { v1 as uuid } from 'uuid';
+import { v4 as uuid } from 'uuid';
 
 @Injectable({ providedIn: 'root' })
 export class DataService {
@@ -77,29 +71,15 @@ export class DataService {
   }
 
   /**
-   * Renew all environments UUIDs
-   *
-   * @param environments
-   * @param subject
-   */
-  public renewEnvironmentsUUIDs(environments: Environments, erase = false) {
-    environments.forEach((environment) => {
-      this.renewEnvironmentUUIDs(environment, erase);
-    });
-
-    return environments;
-  }
-
-  /**
    * Renew one environment UUIDs
    *
    * @param params
    */
-  public renewEnvironmentUUIDs(environment: Environment, erase = false) {
-    environment.uuid = erase ? '' : uuid();
+  public renewEnvironmentUUIDs(environment: Environment) {
+    environment.uuid = uuid();
 
     environment.routes.forEach((route) => {
-      this.renewRouteUUIDs(route, erase);
+      this.renewRouteUUIDs(route);
     });
 
     return environment;
@@ -110,11 +90,11 @@ export class DataService {
    *
    * @param params
    */
-  public renewRouteUUIDs(route: Route, erase = false) {
-    route.uuid = erase ? '' : uuid();
+  public renewRouteUUIDs(route: Route) {
+    route.uuid = uuid();
 
     route.responses.forEach((routeResponse) => {
-      routeResponse.uuid = erase ? '' : uuid();
+      routeResponse.uuid = uuid();
     });
 
     return route;

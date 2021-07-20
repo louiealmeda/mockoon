@@ -337,21 +337,13 @@ export class ImportExportService extends Logger {
       ? params.data
       : [params.data];
 
-    dataToExport = data.map((dataItem) => {
-      // erase UUID to easier sharing
-      dataItem =
-        params.subject === 'environment'
-          ? this.dataService.renewEnvironmentUUIDs(
-              dataItem as Environment,
-              true
-            )
-          : this.dataService.renewRouteUUIDs(dataItem as Route, true);
-
-      return {
-        type: params.subject,
-        item: dataItem
-      } as ExportDataRoute | ExportDataEnvironment;
-    });
+    dataToExport = data.map(
+      (dataItem) =>
+        ({
+          type: params.subject,
+          item: dataItem
+        } as ExportDataRoute | ExportDataEnvironment)
+    );
 
     return JSON.stringify(
       {
